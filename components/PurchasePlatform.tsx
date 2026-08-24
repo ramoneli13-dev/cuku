@@ -1,4 +1,11 @@
+"use client";
+
+import { FormEvent, useEffect, useState } from "react";
+
 type IconName = "search" | "shield" | "delivery";
+
+// Número operativo de Cúku. Cámbialo aquí cuando se defina la línea oficial.
+const CUKU_WHATSAPP_NUMBER = "573224565714";
 
 function FeatureIcon({ name }: { name: IconName }) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -55,6 +62,40 @@ const features: Array<{ icon: IconName; title: string; description: string }> = 
 ];
 
 export function PurchasePlatform() {
+  const [orderModalOpen, setOrderModalOpen] = useState(false);
+  const [orderSent, setOrderSent] = useState(false);
+
+  useEffect(() => {
+    if (!orderModalOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOrderModalOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [orderModalOpen]);
+
+  function openOrderModal() {
+    setOrderSent(false);
+    setOrderModalOpen(true);
+  }
+
+  function submitOrder(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const name = String(form.get("name") ?? "").trim();
+    const order = String(form.get("order") ?? "").trim();
+    const phone = String(form.get("phone") ?? "").trim();
+    const message = `Hola Cúku, mi nombre es ${name} y necesito: ${order}. Mi WhatsApp es ${phone}.`;
+    const url = `https://wa.me/${CUKU_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    setOrderSent(true);
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
   return (
     <div className="site-shell">
       <header className="site-header">
@@ -65,8 +106,11 @@ export function PurchasePlatform() {
         <nav className="nav-links" aria-label="Navegación principal">
           <a href="#beneficios">Beneficios</a>
           <a href="#como-funciona">Cómo funciona</a>
+          <a href="/compradores/registro">Quiero ser Comprador</a>
         </nav>
-        <a className="button button-small" href="#comenzar">Comenzar</a>
+        <button className="button button-small" onClick={openOrderModal} type="button">
+          Comenzar
+        </button>
       </header>
 
       <main>
@@ -85,9 +129,9 @@ export function PurchasePlatform() {
               las opciones y te lo entrega donde estés.
             </p>
             <div className="hero-actions">
-              <a className="button button-primary" href="#comenzar">
+              <button className="button button-primary" onClick={openOrderModal} type="button">
                 Pedir con Cúku <span aria-hidden="true">→</span>
-              </a>
+              </button>
               <a className="button button-secondary" href="#beneficios">Conocer más</a>
             </div>
             <div className="trust-row" aria-label="Ventajas del servicio">
@@ -205,13 +249,27 @@ export function PurchasePlatform() {
               lo busca por ti.
             </p>
           </div>
-          <a
+          <button
             className="button button-light"
-            href="https://wa.me/573224565714"
-            target="_blank"
-            rel="noreferrer"
+            onClick={openOrderModal}
+            type="button"
           >
             Crear mi pedido <span aria-hidden="true">→</span>
+          </button>
+        </section>
+
+        <section className="recruitment-section">
+          <div className="recruitment-icon" aria-hidden="true">↗</div>
+          <div>
+            <span className="section-kicker">Trabaja con nosotros</span>
+            <h2>Gana ingresos extra recorriendo Cúcuta</h2>
+            <p>
+              Conviértete en comprador local de Cúku. Elige tus horarios y ayuda
+              a tus vecinos.
+            </p>
+          </div>
+          <a className="button button-secondary" href="/compradores/registro">
+            Registrarme para trabajar
           </a>
         </section>
       </main>
@@ -231,6 +289,70 @@ export function PurchasePlatform() {
           <a href="#terminos">Términos</a>
         </nav>
       </footer>
+
+      {orderModalOpen && (
+        <div
+          className="modal-backdrop"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setOrderModalOpen(false);
+          }}
+          role="presentation"
+        >
+          <section
+            aria-labelledby="order-modal-title"
+            aria-modal="true"
+            className="order-modal"
+            role="dialog"
+          >
+            <button
+              aria-label="Cerrar formulario"
+              className="modal-close"
+              onClick={() => setOrderModalOpen(false)}
+              type="button"
+            >
+              ×
+            </button>
+            <span className="section-kicker">Crear pedido</span>
+            <h2 id="order-modal-title">¿Qué compramos por ti?</h2>
+            <p>Cuéntanos lo que necesitas y continuaremos contigo por WhatsApp.</p>
+            <form onSubmit={submitOrder}>
+              <label>
+                <span>¿Qué necesitas que compremos por ti?</span>
+                <textarea
+                  name="order"
+                  placeholder="Ejemplo: una camisa blanca, talla M, máximo $100.000"
+                  required
+                  rows={4}
+                />
+              </label>
+              <div className="modal-fields">
+                <label>
+                  <span>Tu nombre</span>
+                  <input name="name" autoComplete="name" placeholder="Nombre completo" required />
+                </label>
+                <label>
+                  <span>Tu número de WhatsApp</span>
+                  <input
+                    name="phone"
+                    autoComplete="tel"
+                    inputMode="tel"
+                    placeholder="+57 300 000 0000"
+                    required
+                  />
+                </label>
+              </div>
+              <button className="button button-primary modal-submit" type="submit">
+                Continuar por WhatsApp <span aria-hidden="true">→</span>
+              </button>
+              {orderSent && (
+                <p className="form-success" role="status">
+                  Abrimos WhatsApp con tu pedido listo para enviar.
+                </p>
+              )}
+            </form>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
