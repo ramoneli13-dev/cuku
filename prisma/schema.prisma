@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  BUYER
+  ADMIN
+}
+
+enum ServiceType {
+  FOOD
+  GROCERIES
+  PHARMACY
+  BUY_FOR_ME
+  PACKAGE
+  ERRAND
+  PICKUP_DELIVERY
+  OTHER
+}
+
+enum PurchaseStatus {
+  OPEN
+  ACCEPTED
+  OPTIONS_SENT
+  OPTION_APPROVED
+  PURCHASED
+  PICKED_UP
+  DELIVERED
+  COMPLETED
+  CANCELLED
+}
+
+enum OptionDecision {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  PRICE_UPDATE
+  APPROVAL_REQUEST
+  SYSTEM
+}
+
+model User {
+  id                String            @id @default(cuid())
+  name              String
+  email             String            @unique
+  phone             String?           @unique
+  role              UserRole
+  active            Boolean           @default(true)
+  customerPurchases PurchaseRequest[] @relation("CustomerPurchases")
+  buyerPurchases    PurchaseRequest[] @relation("BuyerPurchases")
+  messages          OrderMessage[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model ZoneConfig {
+  id               String            @id @default(cuid())
+  slug             String            @unique
+  name             String
+  active           Boolean           @default(true)
+  baseFee           Int
+  perKmFee          Int
+  remoteSurcharge  Int               @default(0)
+  serviceStart     String
+  serviceEnd       String
+  purchases        PurchaseRequest[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model PurchaseRequest {
+  id                   String          @id @default(cuid())
+  customerId           String
+  customer             User            @relation("CustomerPurchases", fields: [customerId], references: [id])
+  buyerId              String?
+  buyer                 User?           @relation("BuyerPurchases", fields: [buyerId], references: [id])
+  serviceType           ServiceType
+  status                PurchaseStatus @default(OPEN)
+  title                 String
+  description           String
+  businessName          String?
+  businessAddress       String?
+  doesNotKnowStore      Boolean         @default(false)
+  product               String
+  size                  String?
+  color                 String?
+  brand                 String?
+  quantity              Int             @default(1)
+  maxBudget             Int
+  specialInstructions   String?
+  referenceImages       String[]
+  deliveryAddress       String
+  zoneId                String
+  zone                  ZoneConfig      @relation(fields: [zoneId], references: [id])
+  distanceKm            Decimal         @db.Decimal(8, 2)
+  productCost           Int             @default(0)
+  buyerFee              Int
+  deliveryFee           Int
+  platformFee           Int
+  tip                    Int             @default(0)
+  total                  Int
+  selectedOptionId      String?
+  options                ProductOption[]
+  messages               OrderMessage[]
+  receipt                Receipt?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  @@index([status, zoneId])
+  @@index([customerId, createdAt])
+  @@index([buyerId, status])
+  @@index([serviceType, createdAt])
+}
+
+model ProductOption {
+  id           String          @id @default(cuid())
+  purchaseId   String
+  purchase     PurchaseRequest @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  businessName String
+  productName  String
+  price        Int
+  details      String
+  imageUrl     String?
+  decision     OptionDecision  @default(PENDING)
+  createdAt    DateTime        @default(now())
+
+  @@index([purchaseId, decision])
+}
+
+model OrderMessage {
+  id         String          @id @default(cuid())
+  purchaseId String
+  purchase   PurchaseRequest @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  senderId   String?
+  sender     User?           @relation(fields: [senderId], references: [id])
+  senderRole UserRole
+  text       String
+  imageUrl   String?
+  type       MessageType     @default(TEXT)
+  createdAt  DateTime        @default(now())
+
+  @@index([purchaseId, createdAt])
+}
+
+model Receipt {
+  id           String          @id @default(cuid())
+  purchaseId   String          @unique
+  purchase     PurchaseRequest @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  businessName String
+  finalPrice   Int
+  imageUrl     String
+  purchasedAt  DateTime
+  createdAt    DateTime        @default(now())
+}
