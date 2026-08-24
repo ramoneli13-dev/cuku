@@ -6,6 +6,8 @@ type IconName = "search" | "shield" | "delivery";
 
 // Número operativo de Cúku. Cámbialo aquí cuando se defina la línea oficial.
 const CUKU_WHATSAPP_NUMBER = "573224565714";
+const MODA_BUZOS_WHATSAPP_NUMBER = "573224565714";
+const MODA_BUZOS_CATALOG_URL = "https://wa.me/c/573224565714";
 
 function FeatureIcon({ name }: { name: IconName }) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -61,6 +63,33 @@ const features: Array<{ icon: IconName; title: string; description: string }> = 
   },
 ];
 
+const modaBuzosProducts = [
+  {
+    name: "Buzo Premium",
+    category: "Buzos",
+    price: "$75.000",
+    shortLabel: "BU",
+  },
+  {
+    name: "Chaqueta Urbana",
+    category: "Chaquetas",
+    price: "$120.000",
+    shortLabel: "CH",
+  },
+  {
+    name: "Conjunto Impermeable",
+    category: "Conjuntos deportivos",
+    price: "$145.000",
+    shortLabel: "CI",
+  },
+  {
+    name: "Rompevientos Liviano",
+    category: "Rompevientos",
+    price: "$95.000",
+    shortLabel: "RO",
+  },
+];
+
 export function PurchasePlatform() {
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [orderSent, setOrderSent] = useState(false);
@@ -105,6 +134,7 @@ export function PurchasePlatform() {
         </a>
         <nav className="nav-links" aria-label="Navegación principal">
           <a href="#beneficios">Beneficios</a>
+          <a href="#tienda-aliada">Tienda aliada</a>
           <a href="#como-funciona">Cómo funciona</a>
           <a href="/compradores/registro">Quiero ser Comprador</a>
         </nav>
@@ -183,6 +213,71 @@ export function PurchasePlatform() {
                 <small>Siempre tienes el control</small>
               </div>
             </div>
+          </div>
+        </section>
+
+
+        <section className="partner-store-section" id="tienda-aliada">
+          <div className="partner-store-heading">
+            <div>
+              <span className="section-kicker">Tienda aliada · Cúcuta</span>
+              <h2>Compra directo en MODA BUZOS (C.C. Alejandrina)</h2>
+              <p>
+                Explora los mejores buzos, chaquetas, rompevientos y conjuntos
+                deportivos premium en Cúcuta. Elige tu estilo y te lo llevamos
+                hoy mismo a tu casa.
+              </p>
+            </div>
+            <span className="partner-badge">Aliado Cúku</span>
+          </div>
+
+          <div className="partner-product-grid">
+            {modaBuzosProducts.map((product, index) => {
+              const message =
+                `Hola MODA BUZOS, vi su catálogo en la app de Cúku y quiero pedir el producto: ${product.name}`;
+              const whatsappUrl =
+                `https://wa.me/${MODA_BUZOS_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+              return (
+                <article className="partner-product-card" key={product.name}>
+                  <div
+                    className={`partner-product-image partner-product-image-${index + 1}`}
+                    aria-label={`Espacio para foto de ${product.name}`}
+                  >
+                    <span>{product.shortLabel}</span>
+                    <small>Foto próximamente</small>
+                  </div>
+                  <div className="partner-product-copy">
+                    <span>{product.category}</span>
+                    <h3>{product.name}</h3>
+                    <strong>{product.price} COP</strong>
+                  </div>
+                  <a
+                    className="button partner-whatsapp-button"
+                    href={whatsappUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Pedir por WhatsApp <span aria-hidden="true">↗</span>
+                  </a>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="partner-catalog-action">
+            <div>
+              <strong>¿Quieres ver todos los estilos disponibles?</strong>
+              <span>Explora tallas, colores y referencias directamente con la tienda.</span>
+            </div>
+            <a
+              className="button button-primary partner-catalog-button"
+              href={MODA_BUZOS_CATALOG_URL}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Ver catálogo completo en WhatsApp <span aria-hidden="true">↗</span>
+            </a>
           </div>
         </section>
 
