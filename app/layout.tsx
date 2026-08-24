@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
+import { Geist } from "next/font/google";
 import "./globals.css";
 
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+});
+
 export const metadata: Metadata = {
-  title: "Cúku | Compra por mí en Cúcuta",
+  title: "Cúku | Tu ciudad, a tu alcance",
   description:
-    "Cúku conecta compras, diligencias y entregas en Cúcuta y sus alrededores con aprobación antes de pagar.",
+    "Compra productos y resuelve diligencias en Cúcuta con ayuda de un comprador local. Tú eliges, apruebas y recibes.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es">
+    <html lang="es" className={geist.variable}>
       <body>{children}</body>
     </html>
   );

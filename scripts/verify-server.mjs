@@ -17,7 +17,7 @@ try {
       const response = await fetch("http://127.0.0.1:3210");
       if (response.ok) {
         const html = await response.text();
-        if (!html.includes("Cúku") || !html.includes("Lo encontramos")) {
+        if (!html.includes("Cúku") || !html.includes("Todo Cúcuta")) {
           throw new Error("La portada no contiene el contenido principal esperado.");
         }
         ready = true;
