@@ -107,9 +107,10 @@ no muestra botones de marca simulados. Cuando el Widget devuelva la transacción
 el cliente pasa a `/pagar/confirmacion` y el pedido solo se despacha después del
 evento firmado `APPROVED` recibido en el webhook.
 
-## Transferencias directas con comprobante
+## Transferencias directas con comprobante (flujo legado no visible)
 
-La ruta `/pagar` usa un flujo de transferencia directa protegido:
+El backend conserva temporalmente este flujo para compatibilidad, pero la ruta
+`/pagar` ya usa exclusivamente el Checkout de Wompi:
 
 1. Crea una referencia única y solicita un QR oficial al proveedor configurado.
 2. Recibe una imagen JPG, PNG o WebP de hasta 4 MB.
