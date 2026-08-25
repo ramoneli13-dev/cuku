@@ -331,8 +331,14 @@ button { color: inherit; cursor: pointer; }
 
 
 .partner-store-section {
-  padding-block: 6.5rem;
-  border-top: 1px solid var(--line);
+  margin-block: 5.5rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid rgba(161, 161, 170, .16);
+  border-radius: 1.75rem;
+  background: #050506;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, .3),
+    inset 0 1px 0 rgba(255, 255, 255, .025);
 }
 
 .storefront-canvas {
@@ -944,10 +950,22 @@ button { color: inherit; cursor: pointer; }
   .partner-store-section, .features-section, .steps-section { padding-block: 5rem; }
   .storefront-canvas { border-radius: 1rem; }
   .storefront-canvas::after { inset: .5rem; border-radius: .55rem; }
-  .storefront-address { padding: 1rem 1.25rem; }
+  .partner-store-section {
+    margin-block: 4.5rem;
+    padding: .7rem;
+    border-radius: 1.2rem;
+  }
+  .storefront-address {
+    padding: 1.25rem 1.15rem 1.3rem;
+  }
   .storefront-address p {
+    max-width: 290px;
+    margin-inline: auto;
     font-size: .62rem;
-    letter-spacing: .14em;
+    letter-spacing: .12em;
+    line-height: 1.75;
+    overflow-wrap: break-word;
+    text-wrap: balance;
   }
   .storefront-interior {
     min-height: 500px;
@@ -978,6 +996,21 @@ button { color: inherit; cursor: pointer; }
   .worker-welcome { align-items: flex-start; flex-direction: column; }
   .order-compensation { grid-template-columns: 1fr 1fr; }
   .order-compensation .button { grid-column: 1 / -1; }
+}
+
+@media (max-width: 380px) {
+  .partner-store-section {
+    width: min(100% - 20px, 1180px);
+    padding: .55rem;
+  }
+  .storefront-address {
+    padding: 1.2rem .85rem 1.25rem;
+  }
+  .storefront-address p {
+    max-width: 250px;
+    font-size: .58rem;
+    letter-spacing: .1em;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
