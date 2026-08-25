@@ -1,0 +1,66 @@
+{
+  "_instrucciones": [
+    "Este archivo contiene 8 productos iniciales de ejemplo y está preparado para un total de 47.",
+    "Para agregar los productos restantes, pega cada nuevo objeto dentro del arreglo productos, inmediatamente después del producto con id 8 y antes del corchete de cierre.",
+    "Continúa la numeración desde id 9 hasta id 47 y conserva exactamente los campos id, nombre, precio, categoria e imagen.",
+    "Sube las fotografías correspondientes en public/images/modabuzos/. La ruta pública usada en imagen debe comenzar con /images/modabuzos/."
+  ],
+  "productos": [
+    {
+      "id": 1,
+      "nombre": "Buzo Premium Negro",
+      "precio": 75000,
+      "categoria": "Buzos",
+      "imagen": "/images/modabuzos/buzo-premium-negro.jpg"
+    },
+    {
+      "id": 2,
+      "nombre": "Buzo Oversize Gris",
+      "precio": 85000,
+      "categoria": "Buzos",
+      "imagen": "/images/modabuzos/buzo-oversize-gris.jpg"
+    },
+    {
+      "id": 3,
+      "nombre": "Chaqueta Urbana Impermeable",
+      "precio": 120000,
+      "categoria": "Chaquetas",
+      "imagen": "/images/modabuzos/chaqueta-urbana-impermeable.jpg"
+    },
+    {
+      "id": 4,
+      "nombre": "Chaqueta Deportiva Azul",
+      "precio": 110000,
+      "categoria": "Chaquetas",
+      "imagen": "/images/modabuzos/chaqueta-deportiva-azul.jpg"
+    },
+    {
+      "id": 5,
+      "nombre": "Rompevientos Liviano Negro",
+      "precio": 95000,
+      "categoria": "Rompevientos",
+      "imagen": "/images/modabuzos/rompevientos-liviano-negro.jpg"
+    },
+    {
+      "id": 6,
+      "nombre": "Rompevientos Reflectivo",
+      "precio": 105000,
+      "categoria": "Rompevientos",
+      "imagen": "/images/modabuzos/rompevientos-reflectivo.jpg"
+    },
+    {
+      "id": 7,
+      "nombre": "Conjunto Deportivo Premium",
+      "precio": 145000,
+      "categoria": "Conjuntos",
+      "imagen": "/images/modabuzos/conjunto-deportivo-premium.jpg"
+    },
+    {
+      "id": 8,
+      "nombre": "Conjunto Impermeable Unisex",
+      "precio": 160000,
+      "categoria": "Conjuntos",
+      "imagen": "/images/modabuzos/conjunto-impermeable-unisex.jpg"
+    }
+  ]
+}
