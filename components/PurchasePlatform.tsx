@@ -1,6 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
+
+import modaBuzosData from "@/data/modabuzos.json";
 
 type IconName = "search" | "shield" | "delivery";
 
@@ -63,36 +66,80 @@ const features: Array<{ icon: IconName; title: string; description: string }> = 
   },
 ];
 
-const modaBuzosProducts = [
-  {
-    name: "Buzo Premium",
-    category: "Buzos",
-    price: "$75.000",
-    shortLabel: "BU",
-  },
-  {
-    name: "Chaqueta Urbana",
-    category: "Chaquetas",
-    price: "$120.000",
-    shortLabel: "CH",
-  },
-  {
-    name: "Conjunto Impermeable",
-    category: "Conjuntos deportivos",
-    price: "$145.000",
-    shortLabel: "CI",
-  },
-  {
-    name: "Rompevientos Liviano",
-    category: "Rompevientos",
-    price: "$95.000",
-    shortLabel: "RO",
-  },
-];
+type ModaBuzosProduct = (typeof modaBuzosData.productos)[number];
+
+const MODA_BUZOS_CATEGORIES = [
+  "Todos",
+  "Buzos",
+  "Chaquetas",
+  "Rompevientos",
+  "Conjuntos",
+] as const;
+
+// CATÁLOGO: agrega los productos 9–47 en data/modabuzos.json.
+// FOTOS: sube cada archivo en public/images/modabuzos/ usando la ruta "imagen" del JSON.
+function formatCop(value: number) {
+  return `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+}
+
+function ProductImage({ product }: { product: ModaBuzosProduct }) {
+  const [imageAvailable, setImageAvailable] = useState(true);
+  const initials = product.nombre
+    .split(/\s+/)
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div
+      aria-label={`Foto de ${product.nombre}`}
+      className="partner-product-image"
+      role="img"
+    >
+      {imageAvailable ? (
+        <Image
+          alt={product.nombre}
+          fill
+          onError={() => setImageAvailable(false)}
+          quality={90}
+          sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 25vw"
+          src={product.imagen}
+        />
+      ) : (
+        <div className="partner-image-placeholder">
+          <span>{initials}</span>
+          <small>Sube la foto en {product.imagen}</small>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function PurchasePlatform() {
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [orderSent, setOrderSent] = useState(false);
+  const [productSearch, setProductSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState("Todos");
+  const [visibleProducts, setVisibleProducts] = useState(8);
+
+  const normalizedSearch = productSearch.trim().toLocaleLowerCase("es");
+  const filteredModaBuzosProducts = modaBuzosData.productos.filter((product) => {
+    const matchesCategory =
+      activeCategory === "Todos" || product.categoria === activeCategory;
+    const matchesSearch = product.nombre
+      .toLocaleLowerCase("es")
+      .includes(normalizedSearch);
+    return matchesCategory && matchesSearch;
+  });
+  const visibleModaBuzosProducts = filteredModaBuzosProducts.slice(
+    0,
+    visibleProducts,
+  );
+
+  useEffect(() => {
+    setVisibleProducts(8);
+  }, [activeCategory, productSearch]);
 
   useEffect(() => {
     if (!orderModalOpen) return;
@@ -231,39 +278,96 @@ export function PurchasePlatform() {
             <span className="partner-badge">Aliado Cúku</span>
           </div>
 
-          <div className="partner-product-grid">
-            {modaBuzosProducts.map((product, index) => {
-              const message =
-                `Hola MODA BUZOS, vi su catálogo en la app de Cúku y quiero pedir el producto: ${product.name}`;
-              const whatsappUrl =
-                `https://wa.me/${MODA_BUZOS_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-              return (
-                <article className="partner-product-card" key={product.name}>
-                  <div
-                    className={`partner-product-image partner-product-image-${index + 1}`}
-                    aria-label={`Espacio para foto de ${product.name}`}
-                  >
-                    <span>{product.shortLabel}</span>
-                    <small>Foto próximamente</small>
-                  </div>
-                  <div className="partner-product-copy">
-                    <span>{product.category}</span>
-                    <h3>{product.name}</h3>
-                    <strong>{product.price} COP</strong>
-                  </div>
-                  <a
-                    className="button partner-whatsapp-button"
-                    href={whatsappUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Pedir por WhatsApp <span aria-hidden="true">↗</span>
-                  </a>
-                </article>
-              );
-            })}
+          <div className="partner-store-tools">
+            <label className="partner-search">
+              <span className="visually-hidden">Buscar productos de MODA BUZOS</span>
+              <span aria-hidden="true">⌕</span>
+              <input
+                aria-label="Buscar productos de MODA BUZOS"
+                onChange={(event) => setProductSearch(event.target.value)}
+                placeholder="Buscar por nombre…"
+                type="search"
+                value={productSearch}
+              />
+            </label>
+            <div className="partner-filters" aria-label="Filtrar por categoría">
+              {MODA_BUZOS_CATEGORIES.map((category) => (
+                <button
+                  aria-pressed={activeCategory === category}
+                  className={activeCategory === category ? "active" : ""}
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  type="button"
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
+
+          <div className="partner-results-row">
+            <span>
+              {filteredModaBuzosProducts.length}{" "}
+              {filteredModaBuzosProducts.length === 1 ? "producto" : "productos"}
+            </span>
+            {(productSearch || activeCategory !== "Todos") && (
+              <button
+                onClick={() => {
+                  setProductSearch("");
+                  setActiveCategory("Todos");
+                }}
+                type="button"
+              >
+                Limpiar filtros
+              </button>
+            )}
+          </div>
+
+          {visibleModaBuzosProducts.length > 0 ? (
+            <div className="partner-product-grid">
+              {visibleModaBuzosProducts.map((product) => {
+                const formattedPrice = formatCop(product.precio);
+                const message =
+                  `Hola MODA BUZOS, quiero ordenar el ${product.nombre} de precio ${formattedPrice} que vi en Cúku.`;
+                const whatsappUrl =
+                  `https://wa.me/${MODA_BUZOS_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+                return (
+                  <article className="partner-product-card" key={product.id}>
+                    <ProductImage product={product} />
+                    <div className="partner-product-copy">
+                      <span>{product.categoria}</span>
+                      <h3>{product.nombre}</h3>
+                      <strong>{formattedPrice} COP</strong>
+                    </div>
+                    <a
+                      className="button partner-whatsapp-button"
+                      href={whatsappUrl}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Pedir por WhatsApp <span aria-hidden="true">↗</span>
+                    </a>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="partner-empty-state">
+              <strong>No encontramos productos</strong>
+              <span>Prueba otro nombre o selecciona una categoría diferente.</span>
+            </div>
+          )}
+
+          {visibleProducts < filteredModaBuzosProducts.length && (
+            <button
+              className="button button-secondary partner-load-more"
+              onClick={() => setVisibleProducts((current) => current + 8)}
+              type="button"
+            >
+              Ver más
+            </button>
+          )}
 
           <div className="partner-catalog-action">
             <div>
