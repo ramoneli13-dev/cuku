@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "nombre": "MODA BUZOS",
+    "direccion": "C.C. ALEJANDRÍA • SEGUNDO PISO • LOCAL 222",
+    "categoria": "Ropa y Moda",
+    "descripcion": "La marca urbana líder de Cúcuta. Buzos premium, chaquetas de calle, rompevientos e impermeables.",
+    "whatsapp": "573224565714"
+  },
+  {
+    "id": 2,
+    "nombre": "RESTAURANTE ANK (CAOBOS)",
+    "direccion": "CALLE 15 #3E - 52 • LOS CAOBOS",
+    "categoria": "Restaurantes",
+    "descripcion": "Cortes de carne premium, punta de anca Angus y platos gourmet en la zona gastronómica de Cúcuta.",
+    "whatsapp": "573012256791"
+  },
+  {
+    "id": 3,
+    "nombre": "GALILEO RESTAURANTE BAR",
+    "direccion": "AVENIDA 3 ESTE #14A-25 • LOS CAOBOS",
+    "categoria": "Restaurantes",
+    "descripcion": "Cocina internacional, parrilla gourmet y platos sibaritas icónicos de la ciudad.",
+    "whatsapp": "573045284206"
+  },
+  {
+    "id": 4,
+    "nombre": "EL DUQUE BOUTIQUE (VENTURA PLAZA)",
+    "direccion": "C.C. VENTURA PLAZA • LOCAL 2-109",
+    "categoria": "Ropa y Moda",
+    "descripcion": "Ropa masculina exclusiva y marcas premium como Ralph Lauren, Psycho Bunny y Náutica.",
+    "whatsapp": "573176618507"
+  },
+  {
+    "id": 5,
+    "nombre": "RANCHO Y LEÑA (EL MALECÓN)",
+    "direccion": "AV. LIBERTADORES • MALECÓN • CALLE 4 #13E-55",
+    "categoria": "Restaurantes",
+    "descripcion": "Tradición e ícono de la ciudad. Parrilla tradicional, carnes al carbón y platos típicos familiares.",
+    "whatsapp": "57310XXXXXXX"
+  },
+  {
+    "id": 6,
+    "nombre": "MOKA RESTAURANTE & BAR",
+    "direccion": "CALLE 17 #0E-31 • LOS CAOBOS",
+    "categoria": "Restaurantes",
+    "descripcion": "Excelente variedad en menú de autor, coctelería y el mejor ambiente gourmet en Caobos.",
+    "whatsapp": "57315XXXXXXX"
+  },
+  {
+    "id": 7,
+    "nombre": "KOAJ (VENTURA PLAZA)",
+    "direccion": "C.C. VENTURA PLAZA • LOCALES 1-10 / 1-12",
+    "categoria": "Ropa y Moda",
+    "descripcion": "Últimas tendencias en moda urbana, jeans, chaquetas y accesorios para hombre y mujer.",
+    "whatsapp": "576012948999"
+  },
+  {
+    "id": 8,
+    "nombre": "LILI PINK (VENTURA PLAZA)",
+    "direccion": "C.C. VENTURA PLAZA • LOCAL 1-2",
+    "categoria": "Ropa y Moda",
+    "descripcion": "Ropa interior cómoda, colorida, fresca y esenciales de belleza accesibles para mujer.",
+    "whatsapp": "573104792513"
+  },
+  {
+    "id": 9,
+    "nombre": "LONDERO'S SUR",
+    "direccion": "AV. LIBERTADORES #0E-60 • BARRIO BLANCO",
+    "categoria": "Restaurantes",
+    "descripcion": "Un sitio elegante e icónico de la ciudad. Las mejores carnes rojas y pastas gourmet de Cúcuta.",
+    "whatsapp": "57311XXXXXXX"
+  },
+  {
+    "id": 10,
+    "nombre": "RESTAURANTE ACEITUNA",
+    "direccion": "AVENIDA 0 #13-135 • LOS CAOBOS",
+    "categoria": "Restaurantes",
+    "descripcion": "La mejor e increíble comida árabe tradicional de Cúcuta. Sazón intenso y platos típicos.",
+    "whatsapp": "57312XXXXXXX"
+  }
+]
