@@ -84,6 +84,7 @@ function formatCop(value: number) {
 
 function ProductImage({ product }: { product: ModaBuzosProduct }) {
   const [imageAvailable, setImageAvailable] = useState(true);
+  const imageSource = product.url_imagen_whatsapp || product.imagen;
   const initials = product.nombre
     .split(/\s+/)
     .map((word) => word[0])
@@ -104,12 +105,12 @@ function ProductImage({ product }: { product: ModaBuzosProduct }) {
           onError={() => setImageAvailable(false)}
           quality={90}
           sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 25vw"
-          src={product.imagen}
+          src={imageSource}
         />
       ) : (
         <div className="partner-image-placeholder">
           <span>{initials}</span>
-          <small>Sube la foto en {product.imagen}</small>
+          <small>La foto no está disponible. Ábrela directamente en WhatsApp.</small>
         </div>
       )}
     </div>
@@ -340,6 +341,23 @@ export function PurchasePlatform() {
                       <h3>{product.nombre}</h3>
                       <strong>{formattedPrice} COP</strong>
                     </div>
+                    <a
+                      aria-label={`Ver foto real de ${product.nombre} en WhatsApp`}
+                      className="partner-photo-link"
+                      href={product.url_producto_whatsapp || MODA_BUZOS_CATALOG_URL}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M4 8.5h3l1.2-2h7.6l1.2 2h3v10H4z" />
+                        <circle cx="12" cy="13.5" r="3.2" />
+                      </svg>
+                      Ver foto real en WhatsApp
+                    </a>
                     <a
                       className="button partner-whatsapp-button"
                       href={whatsappUrl}
