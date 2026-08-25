@@ -328,7 +328,7 @@ export function PurchasePlatform() {
               {visibleModaBuzosProducts.map((product) => {
                 const formattedPrice = formatCop(product.precio);
                 const message =
-                  `Hola MODA BUZOS, quiero ordenar el ${product.nombre} de precio ${formattedPrice} que vi en Cúku.`;
+                  `Hola MODA BUZOS, quiero ordenar el ${product.nombre} de precio $${formattedPrice} que vi en Cúku.`;
                 const whatsappUrl =
                   `https://wa.me/${MODA_BUZOS_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
