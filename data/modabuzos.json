@@ -1,9 +1,10 @@
 {
   "_instrucciones": [
-    "Este archivo contiene 8 productos iniciales de ejemplo y está preparado para un total de 47.",
-    "Para agregar los productos restantes, pega cada nuevo objeto dentro del arreglo productos, inmediatamente después del producto con id 8 y antes del corchete de cierre.",
-    "Continúa la numeración desde id 9 hasta id 47 y conserva exactamente los campos id, nombre, precio, categoria e imagen.",
-    "Sube las fotografías correspondientes en public/images/modabuzos/. La ruta pública usada en imagen debe comenzar con /images/modabuzos/."
+    "Los productos 1–4 usan imágenes temporales directas de Unsplash. Sustituye url_imagen_whatsapp por la URL HTTPS directa de la foto real alojada en Meta/WhatsApp.",
+    "Cuando tengas el enlace compartido del artículo exacto de WhatsApp Business, pégalo en url_producto_whatsapp. Mientras tanto se abre el catálogo general de MODA BUZOS.",
+    "Para los productos 5–47, completa url_imagen_whatsapp con una URL directa que sirva una imagen, normalmente desde un subdominio de whatsapp.net o fbcdn.net.",
+    "Agrega los productos 9–47 dentro del arreglo productos y conserva los campos id, nombre, precio, categoria, imagen, url_imagen_whatsapp y url_producto_whatsapp.",
+    "El campo imagen funciona como respaldo. La interfaz prioriza url_imagen_whatsapp cuando no está vacío."
   ],
   "productos": [
     {
@@ -11,56 +12,72 @@
       "nombre": "Buzo Premium Negro",
       "precio": 75000,
       "categoria": "Buzos",
-      "imagen": "/images/modabuzos/buzo-premium-negro.jpg"
+      "imagen": "https://images.unsplash.com/photo-1499972777470-6a932ea55420?auto=format&fit=crop&w=1200&q=85",
+      "url_imagen_whatsapp": "https://images.unsplash.com/photo-1499972777470-6a932ea55420?auto=format&fit=crop&w=1200&q=85",
+      "url_producto_whatsapp": "https://wa.me/c/573224565714"
     },
     {
       "id": 2,
-      "nombre": "Buzo Oversize Gris",
-      "precio": 85000,
-      "categoria": "Buzos",
-      "imagen": "/images/modabuzos/buzo-oversize-gris.jpg"
-    },
-    {
-      "id": 3,
       "nombre": "Chaqueta Urbana Impermeable",
       "precio": 120000,
       "categoria": "Chaquetas",
-      "imagen": "/images/modabuzos/chaqueta-urbana-impermeable.jpg"
+      "imagen": "https://images.unsplash.com/photo-1786052901590-fcef73b18f3c?auto=format&fit=crop&w=1200&q=85",
+      "url_imagen_whatsapp": "https://images.unsplash.com/photo-1786052901590-fcef73b18f3c?auto=format&fit=crop&w=1200&q=85",
+      "url_producto_whatsapp": "https://wa.me/c/573224565714"
+    },
+    {
+      "id": 3,
+      "nombre": "Rompevientos Urbano Monocromático",
+      "precio": 105000,
+      "categoria": "Rompevientos",
+      "imagen": "https://images.unsplash.com/photo-1783314940783-c8b562fff574?auto=format&fit=crop&w=1200&q=85",
+      "url_imagen_whatsapp": "https://images.unsplash.com/photo-1783314940783-c8b562fff574?auto=format&fit=crop&w=1200&q=85",
+      "url_producto_whatsapp": "https://wa.me/c/573224565714"
     },
     {
       "id": 4,
-      "nombre": "Chaqueta Deportiva Azul",
-      "precio": 110000,
-      "categoria": "Chaquetas",
-      "imagen": "/images/modabuzos/chaqueta-deportiva-azul.jpg"
+      "nombre": "Conjunto Deportivo Nocturno",
+      "precio": 145000,
+      "categoria": "Conjuntos",
+      "imagen": "https://images.unsplash.com/photo-1766882322561-ff203e0e746b?auto=format&fit=crop&w=1200&q=85",
+      "url_imagen_whatsapp": "https://images.unsplash.com/photo-1766882322561-ff203e0e746b?auto=format&fit=crop&w=1200&q=85",
+      "url_producto_whatsapp": "https://wa.me/c/573224565714"
     },
     {
       "id": 5,
-      "nombre": "Rompevientos Liviano Negro",
-      "precio": 95000,
-      "categoria": "Rompevientos",
-      "imagen": "/images/modabuzos/rompevientos-liviano-negro.jpg"
+      "nombre": "Buzo Oversize Gris",
+      "precio": 85000,
+      "categoria": "Buzos",
+      "imagen": "/images/modabuzos/buzo-oversize-gris.jpg",
+      "url_imagen_whatsapp": "",
+      "url_producto_whatsapp": "https://wa.me/c/573224565714"
     },
     {
       "id": 6,
-      "nombre": "Rompevientos Reflectivo",
-      "precio": 105000,
-      "categoria": "Rompevientos",
-      "imagen": "/images/modabuzos/rompevientos-reflectivo.jpg"
+      "nombre": "Chaqueta Deportiva Azul",
+      "precio": 110000,
+      "categoria": "Chaquetas",
+      "imagen": "/images/modabuzos/chaqueta-deportiva-azul.jpg",
+      "url_imagen_whatsapp": "",
+      "url_producto_whatsapp": "https://wa.me/c/573224565714"
     },
     {
       "id": 7,
-      "nombre": "Conjunto Deportivo Premium",
-      "precio": 145000,
-      "categoria": "Conjuntos",
-      "imagen": "/images/modabuzos/conjunto-deportivo-premium.jpg"
+      "nombre": "Rompevientos Reflectivo",
+      "precio": 105000,
+      "categoria": "Rompevientos",
+      "imagen": "/images/modabuzos/rompevientos-reflectivo.jpg",
+      "url_imagen_whatsapp": "",
+      "url_producto_whatsapp": "https://wa.me/c/573224565714"
     },
     {
       "id": 8,
       "nombre": "Conjunto Impermeable Unisex",
       "precio": 160000,
       "categoria": "Conjuntos",
-      "imagen": "/images/modabuzos/conjunto-impermeable-unisex.jpg"
+      "imagen": "/images/modabuzos/conjunto-impermeable-unisex.jpg",
+      "url_imagen_whatsapp": "",
+      "url_producto_whatsapp": "https://wa.me/c/573224565714"
     }
   ]
 }
