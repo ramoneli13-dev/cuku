@@ -170,6 +170,7 @@ export function PurchasePlatform() {
           <a href="#beneficios">Beneficios</a>
           <a href="#tienda-aliada">Tienda aliada</a>
           <a href="#como-funciona">Cómo funciona</a>
+          <a href="/pagar">Pagar pedido</a>
           <a href="/compradores/registro">Quiero ser Comprador</a>
         </nav>
         <button className="button button-small" onClick={openOrderModal} type="button">
@@ -532,6 +533,9 @@ export function PurchasePlatform() {
               <button className="button button-primary modal-submit" type="submit">
                 Continuar por WhatsApp <span aria-hidden="true">→</span>
               </button>
+              <a className="modal-payment-link" href="/pagar">
+                ¿Ya recibiste tu cotización? Pagar pedido con Wompi →
+              </a>
               {orderSent && (
                 <p className="form-success" role="status">
                   Abrimos WhatsApp con tu pedido listo para enviar.

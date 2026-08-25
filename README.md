@@ -19,6 +19,8 @@ La marca visible se escribe **Cúku**. En dominios, repositorios y nombres técn
 - Panel administrativo con métricas y edición de tarifas, recargos y horarios.
 - Permisos de servidor para cliente, comprador y administrador.
 - Diseño responsive para móvil y escritorio.
+- Pasarela Cúku preparada con el Widget oficial de Wompi, firma de integridad
+  generada en servidor, conciliación privada en Supabase y webhook validado.
 
 ## Ejecutar localmente
 
@@ -71,9 +73,24 @@ La demostración usa memoria para poder arrancar sin credenciales. El contrato `
 1. Conectar PostgreSQL y generar la migración de Prisma.
 2. Integrar autenticación real y verificación de identidad de compradores.
 3. Guardar fotos y recibos en almacenamiento privado.
-4. Integrar pagos con retención/autorización previa y conciliación.
+4. Completar la vinculación comercial de Wompi, cargar las llaves de producción
+   y configurar la URL de eventos `https://cuku-zeta.vercel.app/api/payments/wompi/webhook`.
 5. Añadir geocodificación, cálculo real de distancia y seguimiento.
 6. Definir política de productos prohibidos, farmacia, reembolsos y disputas.
 7. Revisar términos legales, privacidad y obligaciones tributarias en Colombia.
 
-No se implementaron todavía llamadas, video, catálogos de comercios, pagos reales ni seguimiento GPS; pertenecen a fases posteriores.
+No se implementaron todavía llamadas, video ni seguimiento GPS; pertenecen a
+fases posteriores. Los cobros reales permanecen bloqueados mientras falten las
+credenciales de Wompi, la migración privada de pagos o la configuración de
+WhatsApp Business Cloud API.
+
+## Activar la Pasarela Cúku
+
+1. Ejecuta `supabase/migrations/20260825_create_cuku_payment_orders.sql`.
+2. Copia `.env.example` y configura en Vercel las variables de Wompi, Supabase y
+   WhatsApp. La llave pública es la única variable de Wompi expuesta al navegador.
+3. Prueba primero con llaves `pub_test_`, `test_integrity_` y `test_events_`.
+4. En el panel de Wompi Sandbox registra como URL de eventos
+   `https://cuku-zeta.vercel.app/api/payments/wompi/webhook`.
+5. Después de aprobar todo el flujo, sustituye las tres credenciales por sus
+   equivalentes de producción y registra la URL en el ambiente Producción.
