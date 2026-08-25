@@ -35,6 +35,7 @@ export async function notifyApprovedPayment(order: PaymentOrder) {
     `Pedido: ${order.order_description}`,
     `Producto: ${formatCopFromCents(order.product_amount_cents)}`,
     `Domicilio: ${formatCopFromCents(order.delivery_amount_cents)}`,
+    `Procesamiento: ${formatCopFromCents(order.processing_fee_cents)}`,
     `*Total recibido: ${formatCopFromCents(order.total_amount_cents)}*`,
     `Método: ${order.payment_method_type ?? "Wompi"}`,
     "Asignar a un repartidor antes de despachar.",

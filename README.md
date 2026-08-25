@@ -95,6 +95,18 @@ WhatsApp Business Cloud API.
 5. Después de aprobar todo el flujo, sustituye las tres credenciales por sus
    equivalentes de producción y registra la URL en el ambiente Producción.
 
+El Checkout muestra antes de abrir Wompi el subtotal y la tarifa configurada
+de `3,49% + $900 COP`; el servidor vuelve a calcularla y firma el total para
+evitar manipulaciones desde el navegador. Ejecuta también
+`supabase/migrations/20260825_add_processing_fee_to_cuku_payment_orders.sql`
+si la tabla de pagos ya existía.
+
+Wompi decide qué métodos presenta según los habilitados para el comercio. Su
+documentación web para Colombia no anuncia Apple Pay ni Google Pay; por eso Cúku
+no muestra botones de marca simulados. Cuando el Widget devuelva la transacción,
+el cliente pasa a `/pagar/confirmacion` y el pedido solo se despacha después del
+evento firmado `APPROVED` recibido en el webhook.
+
 ## Transferencias directas con comprobante
 
 La ruta `/pagar` usa un flujo de transferencia directa protegido:

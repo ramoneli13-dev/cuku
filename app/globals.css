@@ -1146,6 +1146,15 @@ button { color: inherit; cursor: pointer; }
 }
 .payment-total span { color: #cbd0dc; font-size: .82rem; font-weight: 700; }
 .payment-total strong { font-size: clamp(1.5rem, 4vw, 2.1rem); letter-spacing: -.04em; }
+.payment-fee-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #9ba2b2;
+  font-size: .76rem;
+}
+.payment-fee-row strong { color: #d7dbe4; }
+.payment-grand-total { margin-top: 0; }
 .payment-fields-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1217,6 +1226,13 @@ button { color: inherit; cursor: pointer; }
   color: #707789;
   font-size: .68rem;
   line-height: 1.5;
+  text-align: center;
+}
+.payment-wallet-note {
+  margin: .8rem auto 0;
+  color: #9da4b3;
+  font-size: .72rem;
+  line-height: 1.55;
   text-align: center;
 }
 
@@ -1350,6 +1366,11 @@ button { color: inherit; cursor: pointer; }
 .payment-success-details span,
 .payment-success-details small { color: var(--muted); font-size: .72rem; }
 .payment-success-details strong { font-size: 1.8rem; }
+.payment-confirmation-pending .payment-success-icon {
+  color: #111318;
+  background: #c9c3ff;
+  box-shadow: 0 0 0 14px rgba(133, 119, 255, .08);
+}
 @keyframes payment-arrive {
   from { opacity: 0; transform: translateY(16px) scale(.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }

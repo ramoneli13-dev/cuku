@@ -7,6 +7,7 @@ import {
   wompiConfigurationStatus,
 } from "@/lib/wompi";
 import { whatsappOperationsConfigured } from "@/lib/whatsapp-operations";
+import { calculateCheckoutAmounts } from "@/lib/payment-fees";
 
 const checkoutSchema = z.object({
   orderDescription: z.string().trim().min(4).max(500),
@@ -36,9 +37,11 @@ export async function POST(request: Request) {
 
     const input = checkoutSchema.parse(await request.json());
     const reference = `CUKU-${Date.now()}-${randomUUID().slice(0, 8).toUpperCase()}`;
-    const productAmountInCents = input.productValueCop * 100;
-    const deliveryAmountInCents = input.deliveryValueCop * 100;
-    const amountInCents = productAmountInCents + deliveryAmountInCents;
+    const amounts = calculateCheckoutAmounts(input.productValueCop, input.deliveryValueCop);
+    const productAmountInCents = amounts.productValueCop * 100;
+    const deliveryAmountInCents = amounts.deliveryValueCop * 100;
+    const processingFeeInCents = amounts.processingFeeCop * 100;
+    const amountInCents = amounts.totalCop * 100;
 
     await createPaymentOrder({
       reference,
@@ -48,6 +51,7 @@ export async function POST(request: Request) {
       customer_document: input.customerDocument,
       product_amount_cents: productAmountInCents,
       delivery_amount_cents: deliveryAmountInCents,
+      processing_fee_cents: processingFeeInCents,
       total_amount_cents: amountInCents,
       currency: "COP",
     });
@@ -60,6 +64,7 @@ export async function POST(request: Request) {
       signature: {
         integrity: createCheckoutSignature(reference, amountInCents),
       },
+      redirectUrl: new URL("/pagar/confirmacion", request.url).toString(),
       customerData: {
         email: input.customerEmail,
         fullName: input.customerName,

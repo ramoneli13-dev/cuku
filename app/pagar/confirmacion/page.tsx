@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CukuPaymentGateway } from "@/components/CukuPaymentGateway";
+import { Suspense } from "react";
+import { PaymentConfirmation } from "@/components/PaymentConfirmation";
 
 export const metadata: Metadata = {
-  title: "Pago Cúku | Checkout seguro",
-  description: "Paga tu pedido de Cúku con el Checkout seguro de Wompi.",
+  title: "Confirmación de pago | Cúku",
+  description: "Consulta la confirmación segura de tu pago en Cúku.",
 };
 
-export default function PaymentPage() {
+export default function PaymentConfirmationPage() {
   return (
     <main className="payment-page">
       <header className="payment-page-header">
@@ -17,7 +18,9 @@ export default function PaymentPage() {
         </Link>
         <Link className="payment-back" href="/">← Volver al inicio</Link>
       </header>
-      <CukuPaymentGateway />
+      <Suspense fallback={<p className="payment-pending">Consultando el pago…</p>}>
+        <PaymentConfirmation />
+      </Suspense>
     </main>
   );
 }

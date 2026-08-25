@@ -1,8 +1,9 @@
 "use client";
 
 import Script from "next/script";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import { calculateCheckoutAmounts } from "@/lib/payment-fees";
 
 type GatewayConfig = {
   configured: boolean;
@@ -16,6 +17,7 @@ type CheckoutSession = {
   reference: string;
   publicKey: string;
   signature: { integrity: string };
+  redirectUrl: string;
   customerData: {
     email: string;
     fullName: string;
@@ -23,8 +25,6 @@ type CheckoutSession = {
     legalIdType: "CC";
   };
 };
-
-type TransactionStatus = "PENDING" | "APPROVED" | "DECLINED" | "VOIDED" | "ERROR";
 
 declare global {
   interface Window {
@@ -47,23 +47,18 @@ function numericValue(value: string) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function wait(milliseconds: number) {
-  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
-}
-
 export function CukuPaymentGateway() {
+  const router = useRouter();
   const [scriptReady, setScriptReady] = useState(false);
   const [gateway, setGateway] = useState<GatewayConfig | null>(null);
   const [productValue, setProductValue] = useState("");
   const [deliveryValue, setDeliveryValue] = useState("8000");
   const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState<TransactionStatus>();
-  const [reference, setReference] = useState("");
   const [error, setError] = useState("");
 
   const productValueCop = numericValue(productValue);
   const deliveryValueCop = numericValue(deliveryValue);
-  const total = productValueCop + deliveryValueCop;
+  const amounts = calculateCheckoutAmounts(productValueCop, deliveryValueCop);
 
   useEffect(() => {
     fetch("/api/payments/wompi/config", { cache: "no-store" })
@@ -78,32 +73,9 @@ export function CukuPaymentGateway() {
       );
   }, []);
 
-  async function readFinalStatus(transactionId: string) {
-    for (let attempt = 0; attempt < 12; attempt += 1) {
-      const response = await fetch(
-        `/api/payments/wompi/status?id=${encodeURIComponent(transactionId)}`,
-        { cache: "no-store" },
-      );
-      const payload = (await response.json()) as {
-        error?: string;
-        status?: TransactionStatus;
-        reference?: string;
-      };
-      if (!response.ok || !payload.status) {
-        throw new Error(payload.error ?? "No pudimos confirmar el pago.");
-      }
-      setStatus(payload.status);
-      if (payload.reference) setReference(payload.reference);
-      if (payload.status !== "PENDING") return payload.status;
-      await wait(2500);
-    }
-    return "PENDING" as const;
-  }
-
   async function submitPayment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setStatus(undefined);
 
     if (!gateway?.configured) {
       setError("La pasarela aún espera las credenciales seguras del comercio.");
@@ -132,25 +104,11 @@ export function CukuPaymentGateway() {
       const session = (await response.json()) as CheckoutSession & { error?: string };
       if (!response.ok) throw new Error(session.error ?? "No fue posible iniciar el pago.");
 
-      setReference(session.reference);
       const checkout = new window.WidgetCheckout(session);
       checkout.open(({ transaction }) => {
-        setSubmitting(true);
-        setStatus("PENDING");
-        void readFinalStatus(transaction.id)
-          .then((finalStatus) => {
-            if (finalStatus === "DECLINED" || finalStatus === "ERROR") {
-              setError("Transacción declinada. Por favor, intenta con otro método de pago.");
-            }
-          })
-          .catch((statusError: unknown) => {
-            setError(
-              statusError instanceof Error
-                ? statusError.message
-                : "No pudimos confirmar el pago todavía.",
-            );
-          })
-          .finally(() => setSubmitting(false));
+        router.push(
+          `/pagar/confirmacion?id=${encodeURIComponent(transaction.id)}`,
+        );
       });
       setSubmitting(false);
     } catch (submitError) {
@@ -161,23 +119,6 @@ export function CukuPaymentGateway() {
           : "No fue posible iniciar el pago.",
       );
     }
-  }
-
-  if (status === "APPROVED") {
-    return (
-      <section className="payment-success" aria-live="polite">
-        <div className="payment-success-icon" aria-hidden="true">✓</div>
-        <span className="section-kicker">Transacción aprobada</span>
-        <h1>¡Pago Recibido por Cúku!</h1>
-        <p>Tu pedido ya fue asignado a un repartidor.</p>
-        <div className="payment-success-details">
-          <span>Total confirmado</span>
-          <strong>{formatCop(total)}</strong>
-          <small>Referencia {reference}</small>
-        </div>
-        <Link className="button button-light" href="/">Volver al inicio</Link>
-      </section>
-    );
   }
 
   return (
@@ -197,10 +138,10 @@ export function CukuPaymentGateway() {
           financieros; Cúku nunca almacena números de tarjeta ni claves bancarias.
         </p>
         <div className="payment-methods" aria-label="Métodos disponibles en Wompi">
+          <span>Tarjetas</span>
           <span>PSE</span>
           <span>Nequi</span>
-          <span>Daviplata</span>
-          <span>Visa · Mastercard · Amex</span>
+          <span>DaviPlata</span>
         </div>
         {gateway && (
           <div className={gateway.configured ? "gateway-status ready" : "gateway-status pending"}>
@@ -251,8 +192,16 @@ export function CukuPaymentGateway() {
             </span>
           </label>
           <div className="payment-total">
+            <span>Subtotal</span>
+            <strong>{formatCop(amounts.subtotalCop)}</strong>
+          </div>
+          <div className="payment-fee-row">
+            <span>Procesamiento (3,49% + $900)</span>
+            <strong>{formatCop(amounts.processingFeeCop)}</strong>
+          </div>
+          <div className="payment-total payment-grand-total">
             <span>Total a pagar</span>
-            <strong>{formatCop(total)}</strong>
+            <strong>{formatCop(amounts.totalCop)}</strong>
           </div>
         </div>
 
@@ -289,20 +238,18 @@ export function CukuPaymentGateway() {
         </div>
 
         {error && <p className="payment-error" role="alert">{error}</p>}
-        {status === "PENDING" && (
-          <p className="payment-pending" role="status">
-            Estamos confirmando la transacción con Wompi…
-          </p>
-        )}
-
         <button
           className="button payment-submit"
-          disabled={submitting || total < 1_000 || gateway?.configured !== true}
+          disabled={submitting || amounts.subtotalCop < 1_000 || gateway?.configured !== true}
           type="submit"
         >
-          {submitting ? "Confirmando pago…" : `Pagar ${formatCop(total)} con Wompi`}
+          {submitting ? "Abriendo pago seguro…" : `Continuar y pagar ${formatCop(amounts.totalCop)}`}
           <span aria-hidden="true">→</span>
         </button>
+        <p className="payment-wallet-note">
+          Wompi mostrará automáticamente los métodos de pago habilitados para tu
+          comercio y compatibles con el dispositivo.
+        </p>
         <p className="payment-legal">
           El pedido solo se despacha después de que el webhook firmado confirme
           el estado APROBADO.

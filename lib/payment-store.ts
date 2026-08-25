@@ -10,6 +10,7 @@ export type PaymentOrder = {
   customer_document: string;
   product_amount_cents: number;
   delivery_amount_cents: number;
+  processing_fee_cents: number;
   total_amount_cents: number;
   currency: "COP";
   status: WompiTransactionStatus;
@@ -110,4 +111,3 @@ export async function markOperationsNotified(reference: string) {
     }),
   });
 }
-

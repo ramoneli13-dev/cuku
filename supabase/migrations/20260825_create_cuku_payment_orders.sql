@@ -7,8 +7,9 @@ create table if not exists public.cuku_payment_orders (
   customer_document text not null,
   product_amount_cents bigint not null check (product_amount_cents >= 100000),
   delivery_amount_cents bigint not null check (delivery_amount_cents >= 0),
+  processing_fee_cents bigint not null default 0 check (processing_fee_cents >= 0),
   total_amount_cents bigint not null check (
-    total_amount_cents = product_amount_cents + delivery_amount_cents
+    total_amount_cents = product_amount_cents + delivery_amount_cents + processing_fee_cents
   ),
   currency text not null default 'COP' check (currency = 'COP'),
   status text not null default 'PENDING' check (
@@ -31,4 +32,3 @@ comment on table public.cuku_payment_orders is
 
 comment on column public.cuku_payment_orders.customer_document is
   'Dato privado de conciliación; nunca se expone mediante las políticas públicas de Supabase.';
-
