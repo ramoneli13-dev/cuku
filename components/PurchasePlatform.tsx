@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 
 type IconName = "search" | "shield" | "delivery";
@@ -190,46 +189,36 @@ export function PurchasePlatform() {
 
 
         <section className="partner-store-section" id="tienda-aliada">
-          <div className="partner-brand-banner">
-            <Image
-              alt=""
-              aria-hidden="true"
-              className="partner-brand-image"
-              fill
-              quality={92}
-              sizes="(max-width: 1200px) 100vw, 1180px"
-              src="/images/modabuzos/moda-buzos-storefront.jpeg"
-            />
-            <div className="partner-brand-overlay" aria-hidden="true" />
-            <div className="partner-brand-content">
-              <span className="partner-official-label">
-                <svg
-                  aria-hidden="true"
-                  fill="none"
-                  viewBox="0 0 24 24"
+          <div className="storefront-canvas">
+            <header className="storefront-address">
+              <p>CENTRO COMERCIAL ALEJANDRÍA • SEGUNDO PISO • LOCAL 222</p>
+            </header>
+
+            <div className="storefront-interior">
+              <div className="storefront-sign">
+                <h2>MODA BUZOS</h2>
+              </div>
+
+              <div className="storefront-display">
+                <p>
+                  La marca urbana líder de Cúcuta. Explora más de 40 referencias
+                  exclusivas en buzos premium, chaquetas de calle, rompevientos e
+                  impermeables deportivos directamente desde nuestro almacén
+                  físico.
+                </p>
+              </div>
+
+              <div className="storefront-entry">
+                <a
+                  className="storefront-entry-button"
+                  href={MODA_BUZOS_CATALOG_URL}
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
-                  <path d="m8.8 12.2 2.1 2.1 4.6-5" />
-                  <path d="M12 3.7 14.2 5l2.6-.1.9 2.4 2 1.6-.7 2.5.7 2.5-2 1.6-.9 2.4-2.6-.1L12 19.3l-2.2-1.5-2.6.1-.9-2.4-2-1.6.7-2.5-.7-2.5 2-1.6.9-2.4 2.6.1z" />
-                </svg>
-                Aliado Oficial Cúku
-              </span>
-              <h2>MODA BUZOS</h2>
-              <span className="partner-location">
-                C.C. Alejandrina · Local 222
-              </span>
-              <p>
-                Explora su catálogo completo con más de 40 referencias exclusivas
-                en buzos urbanos, chaquetas streetwear, rompevientos y conjuntos
-                deportivos premium.
-              </p>
-              <a
-                className="button button-primary partner-catalog-button"
-                href={MODA_BUZOS_CATALOG_URL}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Ver Catálogo Real en WhatsApp <span aria-hidden="true">↗</span>
-              </a>
+                  ENTRAR AL LOCAL (VER CATÁLOGO EN WHATSAPP)
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>
