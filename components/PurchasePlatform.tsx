@@ -3,13 +3,10 @@
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
 
-import modaBuzosData from "@/data/modabuzos.json";
-
 type IconName = "search" | "shield" | "delivery";
 
 // Número operativo de Cúku. Cámbialo aquí cuando se defina la línea oficial.
 const CUKU_WHATSAPP_NUMBER = "573224565714";
-const MODA_BUZOS_WHATSAPP_NUMBER = "573224565714";
 const MODA_BUZOS_CATALOG_URL = "https://wa.me/c/573224565714";
 
 function FeatureIcon({ name }: { name: IconName }) {
@@ -66,82 +63,9 @@ const features: Array<{ icon: IconName; title: string; description: string }> = 
   },
 ];
 
-type ModaBuzosProduct = (typeof modaBuzosData.productos)[number];
-
-const MODA_BUZOS_CATEGORIES = [
-  "Todos",
-  "Buzos",
-  "Chaquetas",
-  "Rompevientos",
-  "Conjuntos",
-] as const;
-
-// CATÁLOGO: agrega los productos 9–47 en data/modabuzos.json.
-// FOTOS: sube cada archivo en public/images/modabuzos/ usando la ruta "imagen" del JSON.
-function formatCop(value: number) {
-  return `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
-}
-
-function ProductImage({ product }: { product: ModaBuzosProduct }) {
-  const [imageAvailable, setImageAvailable] = useState(true);
-  const imageSource = product.url_imagen_whatsapp || product.imagen;
-  const initials = product.nombre
-    .split(/\s+/)
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
-  return (
-    <div
-      aria-label={`Foto de ${product.nombre}`}
-      className="partner-product-image"
-      role="img"
-    >
-      {imageAvailable ? (
-        <Image
-          alt={product.nombre}
-          fill
-          onError={() => setImageAvailable(false)}
-          quality={90}
-          sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 25vw"
-          src={imageSource}
-        />
-      ) : (
-        <div className="partner-image-placeholder">
-          <span>{initials}</span>
-          <small>La foto no está disponible. Ábrela directamente en WhatsApp.</small>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export function PurchasePlatform() {
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [orderSent, setOrderSent] = useState(false);
-  const [productSearch, setProductSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("Todos");
-  const [visibleProducts, setVisibleProducts] = useState(8);
-
-  const normalizedSearch = productSearch.trim().toLocaleLowerCase("es");
-  const filteredModaBuzosProducts = modaBuzosData.productos.filter((product) => {
-    const matchesCategory =
-      activeCategory === "Todos" || product.categoria === activeCategory;
-    const matchesSearch = product.nombre
-      .toLocaleLowerCase("es")
-      .includes(normalizedSearch);
-    return matchesCategory && matchesSearch;
-  });
-  const visibleModaBuzosProducts = filteredModaBuzosProducts.slice(
-    0,
-    visibleProducts,
-  );
-
-  useEffect(() => {
-    setVisibleProducts(8);
-  }, [activeCategory, productSearch]);
-
   useEffect(() => {
     if (!orderModalOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -266,140 +190,47 @@ export function PurchasePlatform() {
 
 
         <section className="partner-store-section" id="tienda-aliada">
-          <div className="partner-store-heading">
-            <div>
-              <span className="section-kicker">Tienda aliada · Cúcuta</span>
-              <h2>Compra directo en MODA BUZOS (C.C. Alejandrina)</h2>
-              <p>
-                Explora los mejores buzos, chaquetas, rompevientos y conjuntos
-                deportivos premium en Cúcuta. Elige tu estilo y te lo llevamos
-                hoy mismo a tu casa.
-              </p>
-            </div>
-            <span className="partner-badge">Aliado Cúku</span>
-          </div>
-
-          <div className="partner-store-tools">
-            <label className="partner-search">
-              <span className="visually-hidden">Buscar productos de MODA BUZOS</span>
-              <span aria-hidden="true">⌕</span>
-              <input
-                aria-label="Buscar productos de MODA BUZOS"
-                onChange={(event) => setProductSearch(event.target.value)}
-                placeholder="Buscar por nombre…"
-                type="search"
-                value={productSearch}
-              />
-            </label>
-            <div className="partner-filters" aria-label="Filtrar por categoría">
-              {MODA_BUZOS_CATEGORIES.map((category) => (
-                <button
-                  aria-pressed={activeCategory === category}
-                  className={activeCategory === category ? "active" : ""}
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  type="button"
+          <div className="partner-brand-banner">
+            <Image
+              alt=""
+              aria-hidden="true"
+              className="partner-brand-image"
+              fill
+              quality={92}
+              sizes="(max-width: 1200px) 100vw, 1180px"
+              src="/images/modabuzos/moda-buzos-storefront.jpeg"
+            />
+            <div className="partner-brand-overlay" aria-hidden="true" />
+            <div className="partner-brand-content">
+              <span className="partner-official-label">
+                <svg
+                  aria-hidden="true"
+                  fill="none"
+                  viewBox="0 0 24 24"
                 >
-                  {category}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="partner-results-row">
-            <span>
-              {filteredModaBuzosProducts.length}{" "}
-              {filteredModaBuzosProducts.length === 1 ? "producto" : "productos"}
-            </span>
-            {(productSearch || activeCategory !== "Todos") && (
-              <button
-                onClick={() => {
-                  setProductSearch("");
-                  setActiveCategory("Todos");
-                }}
-                type="button"
+                  <path d="m8.8 12.2 2.1 2.1 4.6-5" />
+                  <path d="M12 3.7 14.2 5l2.6-.1.9 2.4 2 1.6-.7 2.5.7 2.5-2 1.6-.9 2.4-2.6-.1L12 19.3l-2.2-1.5-2.6.1-.9-2.4-2-1.6.7-2.5-.7-2.5 2-1.6.9-2.4 2.6.1z" />
+                </svg>
+                Aliado Oficial Cúku
+              </span>
+              <h2>MODA BUZOS</h2>
+              <span className="partner-location">
+                C.C. Alejandrina · Local 222
+              </span>
+              <p>
+                Explora su catálogo completo con más de 40 referencias exclusivas
+                en buzos urbanos, chaquetas streetwear, rompevientos y conjuntos
+                deportivos premium.
+              </p>
+              <a
+                className="button button-primary partner-catalog-button"
+                href={MODA_BUZOS_CATALOG_URL}
+                rel="noopener noreferrer"
+                target="_blank"
               >
-                Limpiar filtros
-              </button>
-            )}
-          </div>
-
-          {visibleModaBuzosProducts.length > 0 ? (
-            <div className="partner-product-grid">
-              {visibleModaBuzosProducts.map((product) => {
-                const formattedPrice = formatCop(product.precio);
-                const message =
-                  `Hola MODA BUZOS, quiero ordenar el ${product.nombre} de precio $${formattedPrice} que vi en Cúku.`;
-                const whatsappUrl =
-                  `https://wa.me/${MODA_BUZOS_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-                return (
-                  <article className="partner-product-card" key={product.id}>
-                    <ProductImage product={product} />
-                    <div className="partner-product-copy">
-                      <span>{product.categoria}</span>
-                      <h3>{product.nombre}</h3>
-                      <strong>{formattedPrice} COP</strong>
-                    </div>
-                    <a
-                      aria-label={`Ver foto real de ${product.nombre} en WhatsApp`}
-                      className="partner-photo-link"
-                      href={product.url_producto_whatsapp || MODA_BUZOS_CATALOG_URL}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M4 8.5h3l1.2-2h7.6l1.2 2h3v10H4z" />
-                        <circle cx="12" cy="13.5" r="3.2" />
-                      </svg>
-                      Ver foto real en WhatsApp
-                    </a>
-                    <a
-                      className="button partner-whatsapp-button"
-                      href={whatsappUrl}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      Pedir por WhatsApp <span aria-hidden="true">↗</span>
-                    </a>
-                  </article>
-                );
-              })}
+                Ver Catálogo Real en WhatsApp <span aria-hidden="true">↗</span>
+              </a>
             </div>
-          ) : (
-            <div className="partner-empty-state">
-              <strong>No encontramos productos</strong>
-              <span>Prueba otro nombre o selecciona una categoría diferente.</span>
-            </div>
-          )}
-
-          {visibleProducts < filteredModaBuzosProducts.length && (
-            <button
-              className="button button-secondary partner-load-more"
-              onClick={() => setVisibleProducts((current) => current + 8)}
-              type="button"
-            >
-              Ver más
-            </button>
-          )}
-
-          <div className="partner-catalog-action">
-            <div>
-              <strong>¿Quieres ver todos los estilos disponibles?</strong>
-              <span>Explora tallas, colores y referencias directamente con la tienda.</span>
-            </div>
-            <a
-              className="button button-primary partner-catalog-button"
-              href={MODA_BUZOS_CATALOG_URL}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Ver catálogo completo en WhatsApp <span aria-hidden="true">↗</span>
-            </a>
           </div>
         </section>
 
