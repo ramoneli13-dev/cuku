@@ -1,12 +1,54 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import comerciosData from "../data/comercios.json";
 
 type IconName = "search" | "shield" | "delivery";
 
+type Comercio = {
+  id: number;
+  nombre: string;
+  direccion: string;
+  categoria: string;
+  descripcion: string;
+  whatsapp: string;
+};
+
+const COMMERCE_CATEGORIES = ["Todas", "Ropa y Moda", "Restaurantes"];
+const COMMERCE_ZONES = [
+  { label: "Todas las zonas", value: "Todas" },
+  { label: "Caobos", value: "CAOBOS" },
+  { label: "Ventura Plaza", value: "VENTURA PLAZA" },
+  { label: "El Malecón", value: "MALECÓN" },
+  { label: "Barrio Blanco", value: "BARRIO BLANCO" },
+  { label: "Alejandría", value: "ALEJANDRÍA" },
+];
+
+function normalizeCommerceText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function createCommerceWhatsAppUrl(comercio: Comercio) {
+  if (!/^\d{10,15}$/.test(comercio.whatsapp)) return null;
+
+  const message = [
+    "*¡Hola! Vi su local en la plataforma Cúku Cúcuta.*",
+    `Local: *${comercio.nombre}*`,
+    `Dirección: ${comercio.direccion}`,
+    "",
+    "Quiero hacerles un pedido directo para que un mensajero de Cúku pase a recogerlo.",
+    "¿Me comparten su menú/catálogo?",
+  ].join("\n");
+
+  return `https://wa.me/${comercio.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
 // Número operativo de Cúku. Cámbialo aquí cuando se defina la línea oficial.
 const CUKU_WHATSAPP_NUMBER = "573224565714";
-const MODA_BUZOS_CATALOG_URL = "https://wa.me/c/573224565714";
 
 function FeatureIcon({ name }: { name: IconName }) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -65,6 +107,27 @@ const features: Array<{ icon: IconName; title: string; description: string }> = 
 export function PurchasePlatform() {
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [orderSent, setOrderSent] = useState(false);
+  const [commerceSearch, setCommerceSearch] = useState("");
+  const [commerceCategory, setCommerceCategory] = useState("Todas");
+  const [commerceZone, setCommerceZone] = useState("Todas");
+
+  const normalizedSearch = normalizeCommerceText(commerceSearch);
+  const visibleComercios = (comerciosData as Comercio[]).filter((comercio) => {
+    const searchableText = normalizeCommerceText(
+      `${comercio.nombre} ${comercio.direccion} ${comercio.categoria}`,
+    );
+    const matchesSearch =
+      normalizedSearch.length === 0 || searchableText.includes(normalizedSearch);
+    const matchesCategory =
+      commerceCategory === "Todas" || comercio.categoria === commerceCategory;
+    const matchesZone =
+      commerceZone === "Todas" ||
+      normalizeCommerceText(comercio.direccion).includes(
+        normalizeCommerceText(commerceZone),
+      );
+
+    return matchesSearch && matchesCategory && matchesZone;
+  });
   useEffect(() => {
     if (!orderModalOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -189,38 +252,126 @@ export function PurchasePlatform() {
 
 
         <section className="partner-store-section" id="tienda-aliada">
-          <div className="storefront-canvas">
-            <header className="storefront-address">
-              <p>CENTRO COMERCIAL ALEJANDRÍA • SEGUNDO PISO • LOCAL 222</p>
-            </header>
-
-            <div className="storefront-interior">
-              <div className="storefront-sign">
-                <h2>MODA BUZOS</h2>
-              </div>
-
-              <div className="storefront-display">
-                <p>
-                  La marca urbana líder de Cúcuta. Explora más de 40 referencias
-                  exclusivas en buzos premium, chaquetas de calle, rompevientos e
-                  impermeables deportivos directamente desde nuestro almacén
-                  físico.
-                </p>
-              </div>
-
-              <div className="storefront-entry">
-                <a
-                  className="storefront-entry-button"
-                  href={MODA_BUZOS_CATALOG_URL}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  ENTRAR AL LOCAL (VER CATÁLOGO EN WHATSAPP)
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </div>
+          <div className="commerce-directory-heading">
+            <div>
+              <span className="section-kicker">Comercios aliados de Cúcuta</span>
+              <h2>Compra local. Recíbelo con Cúku.</h2>
+              <p>
+                Busca por comercio, centro comercial o zona y ordena directamente
+                por WhatsApp.
+              </p>
             </div>
+            <strong>{comerciosData.length} aliados iniciales</strong>
           </div>
+
+          <div className="commerce-controls" role="search">
+            <label className="commerce-search-field">
+              <span>Buscar por nombre o dirección</span>
+              <input
+                onChange={(event) => setCommerceSearch(event.target.value)}
+                placeholder="Ej. Ventura, Caobos o MODA BUZOS"
+                type="search"
+                value={commerceSearch}
+              />
+            </label>
+
+            <label className="commerce-filter">
+              <span>Categoría</span>
+              <select
+                onChange={(event) => setCommerceCategory(event.target.value)}
+                value={commerceCategory}
+              >
+                {COMMERCE_CATEGORIES.map((categoria) => (
+                  <option key={categoria} value={categoria}>
+                    {categoria}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="commerce-filter">
+              <span>Zona</span>
+              <select
+                onChange={(event) => setCommerceZone(event.target.value)}
+                value={commerceZone}
+              >
+                {COMMERCE_ZONES.map((zona) => (
+                  <option key={zona.value} value={zona.value}>
+                    {zona.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="commerce-results-row" aria-live="polite">
+            <span>
+              {visibleComercios.length}{" "}
+              {visibleComercios.length === 1 ? "comercio encontrado" : "comercios encontrados"}
+            </span>
+            {(commerceSearch ||
+              commerceCategory !== "Todas" ||
+              commerceZone !== "Todas") && (
+              <button
+                onClick={() => {
+                  setCommerceSearch("");
+                  setCommerceCategory("Todas");
+                  setCommerceZone("Todas");
+                }}
+                type="button"
+              >
+                Limpiar filtros
+              </button>
+            )}
+          </div>
+
+          {visibleComercios.length > 0 ? (
+            <div className="commerce-grid">
+              {visibleComercios.map((comercio) => {
+                const whatsappUrl = createCommerceWhatsAppUrl(comercio);
+
+                return (
+                  <article className="commerce-storefront" key={comercio.id}>
+                    <header className="commerce-storefront-address">
+                      {comercio.direccion}
+                    </header>
+                    <div className="commerce-storefront-body">
+                      <span className="commerce-category">{comercio.categoria}</span>
+                      <h3>{comercio.nombre}</h3>
+                      <p>{comercio.descripcion}</p>
+                      <div className="commerce-storefront-entry">
+                        {whatsappUrl ? (
+                          <a
+                            className="commerce-order-button"
+                            href={whatsappUrl}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            ORDENAR EN ESTE LOCAL <span aria-hidden="true">↗</span>
+                          </a>
+                        ) : (
+                          <button
+                            aria-label={`${comercio.nombre}: número de WhatsApp pendiente`}
+                            className="commerce-order-button commerce-order-button-disabled"
+                            disabled
+                            title="Número de WhatsApp pendiente de confirmar"
+                            type="button"
+                          >
+                            ORDENAR EN ESTE LOCAL <span aria-hidden="true">↗</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="commerce-empty-state">
+              <strong>No encontramos comercios con esos filtros.</strong>
+              <p>Prueba otro nombre, dirección, categoría o zona.</p>
+            </div>
+          )}
         </section>
 
         <section className="features-section" id="beneficios">
