@@ -94,3 +94,36 @@ WhatsApp Business Cloud API.
    `https://cuku-zeta.vercel.app/api/payments/wompi/webhook`.
 5. Después de aprobar todo el flujo, sustituye las tres credenciales por sus
    equivalentes de producción y registra la URL en el ambiente Producción.
+
+## Transferencias directas con comprobante
+
+La ruta `/pagar` usa un flujo de transferencia directa protegido:
+
+1. Crea una referencia única y solicita un QR oficial al proveedor configurado.
+2. Recibe una imagen JPG, PNG o WebP de hasta 4 MB.
+3. Calcula SHA-256 para bloquear la reutilización de una misma captura.
+4. OpenAI Vision extrae monto, estado visible y número de comprobante con salida JSON estricta.
+5. La IA nunca cambia una orden a `APPROVED`: solo una confirmación bancaria firmada puede hacerlo.
+6. Después del abono confirmado se avisa a la central de operaciones por WhatsApp.
+
+Ejecuta también `supabase/migrations/20260825_create_transfer_payment_orders.sql`
+y configura las variables `DIRECT_TRANSFER_*` y `OPENAI_*` de `.env.example`.
+El endpoint de QR debe ser el oficial de Nequi, DaviPlata, Bre-B o de la entidad
+financiera contratada; no se deben construir códigos financieros inventados.
+
+El adaptador bancario debe enviar a
+`/api/payments/transfer/bank-confirmation` el JSON:
+
+```json
+{
+  "reference": "CUKU-T-...",
+  "providerTransactionId": "movimiento-unico",
+  "amountInCents": 8300000,
+  "currency": "COP",
+  "status": "APPROVED"
+}
+```
+
+Debe incluir `x-cuku-timestamp` y `x-cuku-signature`; la firma es HMAC-SHA256
+hexadecimal de `<timestamp>.<cuerpo-JSON-exacto>` usando
+`DIRECT_TRANSFER_WEBHOOK_SECRET`. Se rechazan eventos con más de cinco minutos.

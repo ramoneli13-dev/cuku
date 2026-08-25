@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CukuPaymentGateway } from "@/components/CukuPaymentGateway";
+import { DirectTransferCheckout } from "@/components/DirectTransferCheckout";
 
 export const metadata: Metadata = {
-  title: "Pasarela Cúku | Pago seguro",
-  description: "Paga tu pedido de Cúku en pesos colombianos con Wompi.",
+  title: "Pago Cúku | Transferencia directa",
+  description: "Paga tu pedido de Cúku mediante transferencia directa en pesos colombianos.",
 };
 
 export default function PaymentPage() {
@@ -17,7 +17,7 @@ export default function PaymentPage() {
         </Link>
         <Link className="payment-back" href="/">← Volver al inicio</Link>
       </header>
-      <CukuPaymentGateway />
+      <DirectTransferCheckout />
     </main>
   );
 }
